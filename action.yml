@@ -2,8 +2,8 @@ name: "Sec1 Foss Security"
 description: "Check your applications for vulnerabilties using Sec1 Foss Security"
 author: "Secone Software Pvt. Ltd."
 branding:
-  icon: "alert-triangle"
-  color: "yellow"
+  icon: "code"
+  color: "orange"
 inputs:
   apikey:
     description: "SEC1 API Key for the user. It can be generated on sec1 portal (https://sec1.io) "
