@@ -1,0 +1,14 @@
+name: "Sec1 Foss Security"
+description: "Check your applications for vulnerabilties using Sec1 Foss Security"
+author: "Secone Software Pvt. Ltd."
+branding:
+  icon: "alert-triangle"
+  color: "yellow"
+inputs:
+  apikey:
+    description: "SEC1 API Key for the user. It can be generated on sec1 portal (https://sec1.io) "
+runs:
+  using: "docker"
+  image: "docker://sec1security/sec1-foss-security:v1"
+  env:
+    SEC1_INTEGRATION_NAME: GITHUB_ACTIONS
