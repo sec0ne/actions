@@ -7,6 +7,8 @@ branding:
 inputs:
   apikey:
     description: "SEC1 API Key for the user. It can be generated on sec1 portal (https://sec1.io) "
+  scanThreshold:
+    description: "You can specify threshold values for each severity. Ex. critical=1 medium=5 high=10 low=50. If threshold is breach, it will fail the CI build"
 runs:
   using: "docker"
   image: "docker://sec1security/sec1-foss-security:v1"
