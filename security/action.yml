@@ -1,0 +1,16 @@
+name: "Sec1 Security"
+description: "Empower your CI/CD pipeline with Sec1 Security scans to fortify your applications against vulnerabilities."
+author: "Secone Software Pvt. Ltd."
+branding:
+  icon: "code"
+  color: "orange"
+inputs:
+  apikey:
+    description: "Your SEC1 API Key for secure and seamless integration."
+  scanThreshold:
+    description: "Specify threshold values for each severity (e.g., critical=1 medium=5 high=10 low=50). A breach in thresholds will trigger a CI build failure."
+runs:
+  using: "docker"
+  image: "docker://sec1security/sec1-foss-security:v1"
+  env:
+    SEC1_INTEGRATION_NAME: GITHUB_ACTIONS
