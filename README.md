@@ -1,8 +1,12 @@
-# Sec1 GitHub Action
+# Sec1 GitHub Actions Integration
 
-A github action for using [Sec1](https://sec1.io/) to check for vulnerabilities in your GitHub projects.
+## Overview
 
-Here's an example of using action :
+This GitHub Actions workflow integrates [Sec1](https://sec1.io/) to conduct vulnerability scans on your GitHub projects. Sec1 is a powerful tool that helps identify security vulnerabilities within your codebase.
+
+## Example Workflow
+
+Below is an example of using the Sec1 Security Action in your GitHub Actions workflow. This example runs the Sec1 scan on each push to the repository.
 
 ```yaml
 name: Example workflow using Sec1 Security 
@@ -13,20 +17,55 @@ jobs:
     steps:
       - uses: actions/checkout@master
       - name: Run Sec1 Scan to check for vulnerabilities
-        uses: docker://sec1security/sec1-foss-security:v1
+        uses: sec0ne/actions/security@main
         with:
           apikey: ${{ secrets.SEC1_API_KEY }}
 ```
 
-### Getting your Sec1 API Key
+### Customizing Scan Thresholds
 
-The Actions example above refer to a Sec1 API Key:
+Sec1 scan supports setting up threshold values. If the scan reports vulnerabilities exceeding the specified thresholds, Sec1 Security will mark the build as failed. You can set threshold values for different severities such as critical, high, medium, and low.
 
 ```yaml
-env:
-  apikey: ${{ secrets.SEC1_API_KEY }}
+name: Example workflow using Sec1 Security 
+on: push
+jobs:
+  security:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@master
+      - name: Run Sec1 Scan to check for vulnerabilities and with threshold values
+        uses: sec0ne/actions/security@main
+        with:
+          apikey: ${{ secrets.SEC1_API_KEY }}
+          scanThreshold: critical=1 high=1
 ```
 
-Every Sec1 account has this token. Once you [create an account](https://sec1.io/SignUpGH) you can find it:
 
-1. In the UI, go to your Sec1 account's [settings page](https://sec1.io/) and retrieve the API token, as shown in the following.
+### Obtaining your Sec1 API Key
+
+To use Sec1 in your workflow, you need to obtain an API key. Follow these steps:
+
+1. **Navigate to Sec1 Website:**
+   - Visit [https://scopy.sec1.io/](https://scopy.sec1.io/) and log in using your GitHub credentials.
+
+2. **Generate API Key:**
+   - In the "Settings" section, locate the "API key" and click on "Generate API key."
+
+3. **Copy the API Token:**
+   - Copy the generated API token.
+
+4. **Add API Key to GitHub Repository Secrets:**
+   - Add the copied API key to your GitHub repository secrets. Refer to [GitHub's documentation](https://docs.github.com/en/actions/security-guides/using-secrets-in-github-actions#creating-secrets-for-a-repository) for creating secrets at the repository level.
+
+   - If you are working at the organization level, follow the instructions [here](https://docs.github.com/en/actions/security-guides/using-secrets-in-github-actions#creating-secrets-for-an-organization) to create secrets for your organization.
+
+5. **Set API Key Variable in GitHub Actions:**
+   - In your GitHub Actions workflow file (e.g., `.github/workflows/main.yml`), set the `apikey` variable using the secret you created:
+
+     ```yaml
+     env:
+       apikey: ${{ secrets.SEC1_API_KEY }}
+     ```
+
+Now, your GitHub Actions workflow is set up to leverage Sec1 for continuous security checks in your projects.
