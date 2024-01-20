@@ -47,7 +47,7 @@ jobs:
 To use Sec1 in your workflow, you need to obtain an API key. Follow these steps:
 
 1. **Navigate to Sec1 Website:**
-   - Visit [https://scopy.sec1.io/](https://scopy.sec1.io/) and log in using your GitHub credentials.
+   - Visit [Sec1 portal](https://scopy.sec1.io/) and log in using your GitHub credentials.
 
 2. **Generate API Key:**
    - In the "Settings" section, locate the "API key" and click on "Generate API key."
