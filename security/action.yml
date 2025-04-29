@@ -11,6 +11,6 @@ inputs:
     description: "Specify threshold values for each severity (e.g., critical=1 medium=5 high=10 low=50). A breach in thresholds will trigger a CI build failure."
 runs:
   using: "docker"
-  image: "docker://sec1security/sec1-foss-security:v1"
+  image: "docker://sec1security/sec1-foss-security:v2"
   env:
     SEC1_INTEGRATION_NAME: GITHUB_ACTIONS
