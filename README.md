@@ -2,7 +2,7 @@
 
 ## Overview
 
-This GitHub Actions workflow integrates [Sec1](https://sec1.io/) to conduct vulnerability scans on your GitHub projects. Sec1 is a powerful tool that helps identify security vulnerabilities within your codebase.
+This GitHub Actions workflow integrates [Sec1](https://sec1.io/) to conduct vulnerability scans and SAST scans on your GitHub projects. Sec1 is a powerful tool that helps identify security vulnerabilities within your codebase.
 
 ## Example Workflow
 
@@ -20,6 +20,23 @@ jobs:
         uses: sec0ne/actions/security@main
         with:
           apikey: ${{ secrets.SEC1_API_KEY }}
+```
+### To run SAST scan
+Sec1 scan by default runs a foss scan to identify vulnerabilities. If you need to run SAST scan to report security issues, specify scanType as "sast". Below is the example for same.
+
+```yaml
+name: Example workflow using Sec1 Security to run SAST scan
+on: push
+jobs:
+  security:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@master
+      - name: Run Sec1 Scan to check for vulnerabilities
+        uses: sec0ne/actions/security@main
+        with:
+          apikey: ${{ secrets.SEC1_API_KEY }}
+          scanType: sast
 ```
 
 ### Customizing Scan Thresholds
