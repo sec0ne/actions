@@ -7,6 +7,8 @@ branding:
 inputs:
   apikey:
     description: "Your SEC1 API Key for secure and seamless integration."
+  scanType:
+    description: "Specify scan type for sast scan. By default it will run foss scan"
   scanThreshold:
     description: "Specify threshold values for each severity (e.g., critical=1 medium=5 high=10 low=50). A breach in thresholds will trigger a CI build failure."
 runs:
