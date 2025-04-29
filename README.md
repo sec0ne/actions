@@ -39,6 +39,26 @@ jobs:
           scanType: sast
 ```
 
+### Running scans against pull request
+Sec1 scan can be configured to run against a pull request for continuous monitoring and setting up security checks before PR merge. Just change configuration of trigger to pull request.
+
+```yaml
+name: Example workflow using Sec1 Security to run SAST scan on pull request
+on:
+  pull_request:
+    branches: [ main, master ]
+jobs:
+  security:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Run Sec1 Scan to check for vulnerabilities
+        uses: sec0ne/actions/security@main
+        with:
+          apikey: ${{ secrets.SEC1_API_KEY }}
+          scanType: sast
+```
+
 ### Customizing Scan Thresholds
 
 Sec1 scan supports setting up threshold values. If the scan reports vulnerabilities exceeding the specified thresholds, Sec1 Security will mark the build as failed. You can set threshold values for different severities such as critical, high, medium, and low.
