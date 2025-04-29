@@ -15,7 +15,7 @@ jobs:
   security:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@master
+      - uses: actions/checkout@v3
       - name: Run Sec1 Scan to check for vulnerabilities
         uses: sec0ne/actions/security@main
         with:
@@ -31,7 +31,7 @@ jobs:
   security:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@master
+      - uses: actions/checkout@v3
       - name: Run Sec1 Scan to check for vulnerabilities
         uses: sec0ne/actions/security@main
         with:
@@ -50,7 +50,7 @@ jobs:
   security:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@master
+      - uses: actions/checkout@v3
       - name: Run Sec1 Scan to check for vulnerabilities and with threshold values
         uses: sec0ne/actions/security@main
         with:
