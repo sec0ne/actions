@@ -15,7 +15,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - name: Run Sec1 Scan
-        uses: sec0ne/actions/security@main
+        uses: sec0ne/actions/security@v2
         with:
           apikey: ${{ secrets.SEC1_API_KEY }}
 ```
@@ -56,7 +56,7 @@ By default this runs **both SCA and SAST** scans.
 ### Run only SCA
 
 ```yaml
-- uses: sec0ne/actions/security@main
+- uses: sec0ne/actions/security@v2
   with:
     apikey: ${{ secrets.SEC1_API_KEY }}
     runSast: "false"
@@ -65,7 +65,7 @@ By default this runs **both SCA and SAST** scans.
 ### Run only SAST
 
 ```yaml
-- uses: sec0ne/actions/security@main
+- uses: sec0ne/actions/security@v2
   with:
     apikey: ${{ secrets.SEC1_API_KEY }}
     runSca: "false"
@@ -83,7 +83,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - uses: sec0ne/actions/security@main
+      - uses: sec0ne/actions/security@v2
         with:
           apikey: ${{ secrets.SEC1_API_KEY }}
 ```
@@ -91,7 +91,7 @@ jobs:
 ### Fail the build on threshold breach
 
 ```yaml
-- uses: sec0ne/actions/security@main
+- uses: sec0ne/actions/security@v2
   with:
     apikey: ${{ secrets.SEC1_API_KEY }}
     scanThreshold: "critical=1 high=5"
@@ -101,7 +101,7 @@ jobs:
 ### Mark the build unstable instead of failing
 
 ```yaml
-- uses: sec0ne/actions/security@main
+- uses: sec0ne/actions/security@v2
   with:
     apikey: ${{ secrets.SEC1_API_KEY }}
     scanThreshold: "critical=1 high=5"
@@ -115,7 +115,7 @@ jobs:
 Incremental scans only analyze changed code. They require a baseline (full) scan to exist on the Sec1 server.
 
 ```yaml
-- uses: sec0ne/actions/security@main
+- uses: sec0ne/actions/security@v2
   with:
     apikey: ${{ secrets.SEC1_API_KEY }}
     sastIncrementalScan: "true"
@@ -126,7 +126,7 @@ Incremental scans only analyze changed code. They require a baseline (full) scan
 Submit the scan and return immediately. Useful for long-running scans on large repos.
 
 ```yaml
-- uses: sec0ne/actions/security@main
+- uses: sec0ne/actions/security@v2
   with:
     apikey: ${{ secrets.SEC1_API_KEY }}
     asyncScan: "true"
@@ -137,7 +137,7 @@ Note: `asyncScan` is ignored when `scanThreshold` is set, because threshold eval
 ### Custom Sec1 endpoints (self-hosted / on-prem)
 
 ```yaml
-- uses: sec0ne/actions/security@main
+- uses: sec0ne/actions/security@v2
   with:
     apikey: ${{ secrets.SEC1_API_KEY }}
     instanceUrl: https://api.sec1.example.com
@@ -147,7 +147,7 @@ Note: `asyncScan` is ignored when `scanThreshold` is set, because threshold eval
 ### Tag the scan explicitly
 
 ```yaml
-- uses: sec0ne/actions/security@main
+- uses: sec0ne/actions/security@v2
   with:
     apikey: ${{ secrets.SEC1_API_KEY }}
     scanTag: release-2026-q2
@@ -158,7 +158,7 @@ Note: `asyncScan` is ignored when `scanThreshold` is set, because threshold eval
 ```yaml
 - name: Run Sec1 Scan
   id: sec1
-  uses: sec0ne/actions/security@main
+  uses: sec0ne/actions/security@v2
   with:
     apikey: ${{ secrets.SEC1_API_KEY }}
 
@@ -175,7 +175,7 @@ Note: `asyncScan` is ignored when `scanThreshold` is set, because threshold eval
 By default the action uses `$GITHUB_SERVER_URL/$GITHUB_REPOSITORY`. Override when auto-detection isn't what you want:
 
 ```yaml
-- uses: sec0ne/actions/security@main
+- uses: sec0ne/actions/security@v2
   with:
     apikey: ${{ secrets.SEC1_API_KEY }}
     scmUrl: https://github.com/your-org/your-repo
