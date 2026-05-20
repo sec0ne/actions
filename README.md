@@ -2,107 +2,222 @@
 
 ## Overview
 
-This GitHub Actions workflow integrates [Sec1](https://sec1.io/) to conduct vulnerability scans and SAST scans on your GitHub projects. Sec1 is a powerful tool that helps identify security vulnerabilities within your codebase.
+This GitHub Action integrates [Sec1](https://sec1.io/) to run **SCA (FOSS)** and **SAST** security scans on your GitHub projects. Both scans run by default — use the inputs below to customize behavior.
 
-## Example Workflow
-
-Below is an example of using the Sec1 Security Action in your GitHub Actions workflow. This example runs the Sec1 scan on each push to the repository.
+## Quick start
 
 ```yaml
-name: Example workflow using Sec1 Security 
+name: Sec1 Security
 on: push
 jobs:
   security:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
-      - name: Run Sec1 Scan to check for vulnerabilities
+      - uses: actions/checkout@v4
+      - name: Run Sec1 Scan
         uses: sec0ne/actions/security@main
         with:
           apikey: ${{ secrets.SEC1_API_KEY }}
 ```
-### To run SAST scan
-Sec1 scan by default runs a foss scan to identify vulnerabilities. If you need to run SAST scan to report security issues, specify scanType as "sast". Below is the example for same.
+
+By default this runs **both SCA and SAST** scans.
+
+## Inputs
+
+| Input | Description | Default |
+|---|---|---|
+| `apikey` | **Required.** Your Sec1 API Key. | – |
+| `runSca` | Run SCA (FOSS) scan. | `true` |
+| `runSast` | Run SAST scan. | `true` |
+| `scanTag` | Tag to identify this scan. | branch name |
+| `scmUrl` | Override the SCM URL (auto-detected by default). | – |
+| `sastIncrementalScan` | Run SAST in incremental mode (requires a baseline full scan). | `false` |
+| `asyncScan` | Fire-and-forget mode. Submit scan and exit without waiting. Ignored if a threshold is configured. | `false` |
+| `scanThreshold` | Per-severity thresholds (e.g. `critical=1 high=5 medium=10 low=50`). | – |
+| `actionOnThresholdBreached` | What to do if a threshold is breached: `fail` \| `unstable` \| `continue`. `unstable` emits a warning annotation but does not fail the build. | `fail` |
+| `instanceUrl` | Custom Sec1 API URL. | `https://api.sec1.io` |
+| `dashboardUrl` | Custom Sec1 Dashboard URL (used for report links). | `https://unified.sec1.io` |
+| `scanType` | **Deprecated.** Use `runSca`/`runSast`. Accepted values: `foss`, `sast`, `both`. | – |
+
+## Outputs
+
+| Output | Description |
+|---|---|
+| `reportUrl` | URL of the Sec1 scan report. |
+| `critical` | Number of critical vulnerabilities. |
+| `high` | Number of high vulnerabilities. |
+| `medium` | Number of medium vulnerabilities. |
+| `low` | Number of low vulnerabilities. |
+| `totalCve` | Total number of vulnerabilities. |
+| `scanStatus` | Final scan status: `COMPLETED`, `SUBMITTED` (async), or `FAILED`. |
+
+## Examples
+
+### Run only SCA
 
 ```yaml
-name: Example workflow using Sec1 Security to run SAST scan
-on: push
-jobs:
-  security:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v3
-      - name: Run Sec1 Scan to check for vulnerabilities
-        uses: sec0ne/actions/security@main
-        with:
-          apikey: ${{ secrets.SEC1_API_KEY }}
-          scanType: sast
+- uses: sec0ne/actions/security@main
+  with:
+    apikey: ${{ secrets.SEC1_API_KEY }}
+    runSast: "false"
 ```
 
-### Running scans against pull request
-Sec1 scan can be configured to run against a pull request for continuous monitoring and setting up security checks before PR merge. Just change configuration of trigger to pull request.
+### Run only SAST
 
 ```yaml
-name: Example workflow using Sec1 Security to run SAST scan on pull request
+- uses: sec0ne/actions/security@main
+  with:
+    apikey: ${{ secrets.SEC1_API_KEY }}
+    runSca: "false"
+```
+
+### Run on pull requests
+
+```yaml
+name: Sec1 PR check
 on:
   pull_request:
-    branches: [ main, master ]
+    branches: [main, master]
 jobs:
   security:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
-      - name: Run Sec1 Scan to check for vulnerabilities
-        uses: sec0ne/actions/security@main
+      - uses: actions/checkout@v4
+      - uses: sec0ne/actions/security@main
         with:
           apikey: ${{ secrets.SEC1_API_KEY }}
-          scanType: sast
 ```
 
-### Customizing Scan Thresholds
-
-Sec1 scan supports setting up threshold values. If the scan reports vulnerabilities exceeding the specified thresholds, Sec1 Security will mark the build as failed. You can set threshold values for different severities such as critical, high, medium, and low.
+### Fail the build on threshold breach
 
 ```yaml
-name: Example workflow using Sec1 Security 
-on: push
-jobs:
-  security:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v3
-      - name: Run Sec1 Scan to check for vulnerabilities and with threshold values
-        uses: sec0ne/actions/security@main
-        with:
-          apikey: ${{ secrets.SEC1_API_KEY }}
-          scanThreshold: critical=1 high=1
+- uses: sec0ne/actions/security@main
+  with:
+    apikey: ${{ secrets.SEC1_API_KEY }}
+    scanThreshold: "critical=1 high=5"
+    actionOnThresholdBreached: fail
 ```
 
+### Mark the build unstable instead of failing
 
-### Obtaining your Sec1 API Key
+```yaml
+- uses: sec0ne/actions/security@main
+  with:
+    apikey: ${{ secrets.SEC1_API_KEY }}
+    scanThreshold: "critical=1 high=5"
+    actionOnThresholdBreached: unstable
+```
 
-To use Sec1 in your workflow, you need to obtain an API key. Follow these steps:
+`unstable` emits a `::warning::` annotation that shows up on the workflow run summary but does not fail the step.
 
-1. **Navigate to Sec1 Website:**
-   - Visit [Sec1 portal](https://scopy.sec1.io/) and log in using your GitHub credentials.
+### SAST in incremental mode
 
-2. **Generate API Key:**
-   - In the "Settings" section, locate the "API key" and click on "Generate API key."
+Incremental scans only analyze changed code. They require a baseline (full) scan to exist on the Sec1 server.
 
-3. **Copy the API Token:**
-   - Copy the generated API token.
+```yaml
+- uses: sec0ne/actions/security@main
+  with:
+    apikey: ${{ secrets.SEC1_API_KEY }}
+    sastIncrementalScan: "true"
+```
 
-4. **Add API Key to GitHub Repository Secrets:**
-   - Add the copied API key to your GitHub repository secrets. Refer to [GitHub's documentation](https://docs.github.com/en/actions/security-guides/using-secrets-in-github-actions#creating-secrets-for-a-repository) for creating secrets at the repository level.
+### Fire-and-forget (async) mode
 
-   - If you are working at the organization level, follow the instructions [here](https://docs.github.com/en/actions/security-guides/using-secrets-in-github-actions#creating-secrets-for-an-organization) to create secrets for your organization.
+Submit the scan and return immediately. Useful for long-running scans on large repos.
 
-5. **Set API Key Variable in GitHub Actions:**
-   - In your GitHub Actions workflow file (e.g., `.github/workflows/main.yml`), set the `apikey` variable using the secret you created:
+```yaml
+- uses: sec0ne/actions/security@main
+  with:
+    apikey: ${{ secrets.SEC1_API_KEY }}
+    asyncScan: "true"
+```
 
-     ```yaml
-     env:
-       apikey: ${{ secrets.SEC1_API_KEY }}
-     ```
+Note: `asyncScan` is ignored when `scanThreshold` is set, because threshold evaluation needs the final scan counts.
 
-Now, your GitHub Actions workflow is set up to leverage Sec1 for continuous security checks in your projects.
+### Custom Sec1 endpoints (self-hosted / on-prem)
+
+```yaml
+- uses: sec0ne/actions/security@main
+  with:
+    apikey: ${{ secrets.SEC1_API_KEY }}
+    instanceUrl: https://api.sec1.example.com
+    dashboardUrl: https://dashboard.sec1.example.com
+```
+
+### Tag the scan explicitly
+
+```yaml
+- uses: sec0ne/actions/security@main
+  with:
+    apikey: ${{ secrets.SEC1_API_KEY }}
+    scanTag: release-2026-q2
+```
+
+### Use scan outputs in a later step
+
+```yaml
+- name: Run Sec1 Scan
+  id: sec1
+  uses: sec0ne/actions/security@main
+  with:
+    apikey: ${{ secrets.SEC1_API_KEY }}
+
+- name: Post Sec1 results to Slack
+  if: steps.sec1.outputs.totalCve != '0'
+  run: |
+    echo "Sec1 found ${{ steps.sec1.outputs.totalCve }} vulnerabilities."
+    echo "Critical: ${{ steps.sec1.outputs.critical }}"
+    echo "Report: ${{ steps.sec1.outputs.reportUrl }}"
+```
+
+### Override the SCM URL
+
+By default the action uses `$GITHUB_SERVER_URL/$GITHUB_REPOSITORY`. Override when auto-detection isn't what you want:
+
+```yaml
+- uses: sec0ne/actions/security@main
+  with:
+    apikey: ${{ secrets.SEC1_API_KEY }}
+    scmUrl: https://github.com/your-org/your-repo
+```
+
+## Step summary
+
+When the scan completes, a markdown summary is added to the workflow run's summary page with vulnerability counts and the report link — no need to dig through logs.
+
+## Getting your Sec1 API Key
+
+1. Visit [Sec1 portal](https://scopy.sec1.io/) and log in.
+2. Go to **Settings** → **API key** → **Generate API key**.
+3. Copy the key and add it to your repo or org [GitHub Actions secrets](https://docs.github.com/en/actions/security-guides/using-secrets-in-github-actions).
+
+## Migration from older versions
+
+If you were using:
+
+```yaml
+with:
+  apikey: ...
+  scanType: sast
+```
+
+Switch to:
+
+```yaml
+with:
+  apikey: ...
+  runSca: "false"
+  runSast: "true"
+```
+
+The `scanType` input still works for back-compat but is deprecated.
+
+## Troubleshooting
+
+- **`401 Unauthorized`** — check that `apikey` is set and valid.
+- **`No SCAN_DIRECTORY and no SCM URL`** — ensure the action runs in a checked-out repo (`actions/checkout` before this step) or set `scmUrl` explicitly.
+- **Scan times out** — scans poll for 30 minutes max. For large repos use `asyncScan: "true"` (without `scanThreshold`) to fire-and-forget.
+
+---
+
+— Sec1 team
