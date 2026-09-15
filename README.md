@@ -187,7 +187,7 @@ When the scan completes, a markdown summary is added to the workflow run's summa
 
 ## Getting your Sec1 API Key
 
-1. Visit [Sec1 portal](https://scopy.sec1.io/) and log in.
+1. Visit [Sec1 portal](https://unified.sec1.io/) and log in.
 2. Go to **Settings** → **API key** → **Generate API key**.
 3. Copy the key and add it to your repo or org [GitHub Actions secrets](https://docs.github.com/en/actions/security-guides/using-secrets-in-github-actions).
 
