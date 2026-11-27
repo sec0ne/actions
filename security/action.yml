@@ -25,6 +25,9 @@ inputs:
   scmUrl:
     description: "Override the SCM URL. Auto-detected from GitHub by default."
     required: false
+  teamId:
+    description: "File this scan under one of your sub-teams. Leave empty to use the API key owner's team. Copy the id from Settings > Team in Sec1."
+    required: false
   sastIncrementalScan:
     description: "Run SAST scan in incremental mode. Requires a baseline full scan on the Sec1 server. Default: false."
     required: false
@@ -75,6 +78,7 @@ runs:
     SEC1_SCAN_TYPE: ${{ inputs.scanType }}
     SEC1_SCAN_TAG: ${{ inputs.scanTag }}
     SEC1_SCM_URL: ${{ inputs.scmUrl }}
+    SEC1_TEAM_ID: ${{ inputs.teamId }}
     SEC1_SAST_INCREMENTAL_SCAN: ${{ inputs.sastIncrementalScan }}
     SEC1_ASYNC_SCAN: ${{ inputs.asyncScan }}
     SEC1_SBOM_FILE: ${{ inputs.sbomFile }}
