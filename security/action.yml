@@ -69,7 +69,7 @@ outputs:
     description: "Final scan status: COMPLETED | SUBMITTED | FAILED."
 runs:
   using: "docker"
-  image: "docker://us-central1-docker.pkg.dev/cve-buster/sec1-public-repo/sec1-foss-security:v6"
+  image: "docker://us-central1-docker.pkg.dev/cve-buster/sec1-public-repo/sec1-foss-security:v13"
   env:
     SEC1_INTEGRATION_NAME: GITHUB_ACTIONS
     SEC1_API_KEY: ${{ inputs.apikey }}
